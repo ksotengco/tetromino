@@ -33,8 +33,6 @@ public class TetrominoBuilder {
         for (int i = 0; i < 4; i++) {
             TCell cell = new TCell(IColor);
             tet.putCell(i, 1, cell);
-            cell.setXPosition(i);
-            cell.setYPosition(1);
         }
         return tet;
     }
@@ -44,14 +42,10 @@ public class TetrominoBuilder {
         for (int i = 0; i < 3; i++) {
             TCell cell = new TCell(JColor);
             tet.putCell(i, 1, cell);
-            cell.setXPosition(i);
-            cell.setYPosition(1);
         }
 
         TCell cell = new TCell(JColor);
         tet.putCell(0,0, cell);
-        cell.setXPosition(0);
-        cell.setYPosition(0);
 
         return tet;
     }
@@ -61,14 +55,10 @@ public class TetrominoBuilder {
         for (int i = 0; i < 3; i++) {
             TCell cell = new TCell(LColor);
             tet.putCell(i, 1, cell);
-            cell.setXPosition(i);
-            cell.setYPosition(1);
         }
 
         TCell cell = new TCell(LColor);
         tet.putCell(2,0, cell);
-        cell.setXPosition(2);
-        cell.setYPosition(0);
 
         return tet;
     }
@@ -78,8 +68,6 @@ public class TetrominoBuilder {
         for (int i = 0; i < 2; i++) {
             TCell cell = new TCell(OColor);
             tet.putCell(i+1, i, cell);
-            cell.setXPosition(i+1);
-            cell.setYPosition(i);
 
             cell = new TCell(OColor);
         }

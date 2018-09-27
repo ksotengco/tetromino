@@ -2,6 +2,7 @@ package tetris.cs371m.tetris;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.function.Function;
 
 /**
@@ -21,8 +22,22 @@ public class TGrid {
 
     // XXX: Constructor: Generate an empty grid(Fill all the cell as null)
     public TGrid(int columns, int rows) {
+        this.columns = columns;
+        this.rows    = rows;
+
+        grid = new ArrayList<ArrayList<TCell>>();
+
+        ArrayList<TCell> colList = new ArrayList<>(columns);
+        for (int i = 0; i < columns; i++) {
+            colList.add(null);
+        }
 
         //Generate an empty grid
+        for (int i = 0; i < rows; i++) {
+            grid.add(colList);
+        }
+
+        //Collections.fill(grid, null);
 
     }
 
@@ -46,14 +61,23 @@ public class TGrid {
 
     // XXX: return the cell at a position (X,Y)
     public TCell getCellAt(int X, int Y) {
+        if (X >= 0 && X < columns && Y >= 0 && Y < rows) {
+            if (grid.get(Y) != null) {
+                if (grid.get(Y).get(X) != null) {
+                    return grid.get(Y).get(X);
+                }
+            }
+        }
 
-       return null;
+        return null;
     }
 
     // XXX: same as getCellAt(X,Y), except this function also removes it from the grid (by setting the cell to null)
     public TCell extractCellAt(int X, int Y) {
-
-        return null;
+        // TODO: come back to this, possibly make copy constructor
+        TCell cell = grid.get(Y).get(X);
+        grid.get(Y).set(X, null);
+        return cell;
     }
 
     // XXX: X, Y: position in the grid
@@ -75,13 +99,39 @@ public class TGrid {
     // XXX: remove a cell that locates at (X, Y) from the grid
     // XXX: return true if successful, false otherwise
     public boolean removeCell(int X, int Y) {
-
+        if (X >= 0 && X < columns) {
+            if (Y >= 0 && Y < rows) {
+                TCell cell = grid.get(Y).get(X);
+                if (cell != null) {
+                    cell.setXPosition(-1);
+                    cell.setYPosition(-1);
+                    grid.get(Y).set(X, null);
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
     // XXX: look for the first row that is full and return the row number
     // XXX: returns -1 if not found
     public int getFirstFullRow() {
+        int counter = 0;
+        for (int y = 0; y < rows; y++) {
+            //System.out.println(grid.size());
+            if (grid.get(y) != null) {
+                for (int x = 0; x < columns; x++) {
+                    //System.out.println(grid.get(y).size());
+                    if (grid.get(y).get(x) != null) {
+                        counter++;
+                    }
+                }
+            }
+
+            if (counter == columns)
+                return y;
+            counter = 0;
+        }
 
         return -1;
     }
@@ -89,13 +139,34 @@ public class TGrid {
     //XXX: deletes a row with row number `row`, shifts everything down
     //XXX: return true if successful, false otherwise
     public boolean deleteRow(int row) {
+        if (row >= 0 || row < rows) {
+            for (int x = 0; x < columns; x++) {
+                TCell cell = grid.get(row).get(x);
+                if (cell != null) {
+                    cell.setXPosition(-1);
+                    cell.setYPosition(-1);
+                    grid.get(row).set(x, null);
+                }
+            }
 
+            return true;
+        }
         return false;
     }
 
     //XXX: delete all cells in the grid
     public void clear() {
-
+        TCell cell;
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                cell = grid.get(y).get(x);
+                if (cell != null) {
+                    cell.setXPosition(-1);
+                    cell.setYPosition(-1);
+                    grid.get(y).set(x, null);
+                }
+            }
+        }
     }
 
 }
