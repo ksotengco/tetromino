@@ -60,7 +60,15 @@ public class TGrid {
     // XXX: insert a cell into the grid
     // XXX: return true if successful, false otherwise
     public boolean putCell(int X, int Y, TCell cell) {
+        if (X >= 0 && X < columns) {
+            if (Y >= 0 && Y < rows) {
+                grid.get(Y).set(X, cell);
+                cell.setXPosition(X);
+                cell.setYPosition(Y);
 
+                return true;
+            }
+        }
         return false;
     }
 
