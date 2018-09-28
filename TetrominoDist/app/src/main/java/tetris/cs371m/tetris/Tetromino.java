@@ -21,7 +21,11 @@ public class Tetromino extends TGrid {
     // XXX: But do not set the cell position, this should be set by the parent grid
     @Override
     public boolean putCell(int X, int Y, TCell cell) {
-        return true;
+        if (X >= 0 && X < columns && Y >= 0 && Y < rows) {
+            grid.get(Y).set(X, cell);
+            return true;
+        }
+        return false;
     }
 
     // XXX: attempt to insert this Tetromino into a larger grid
@@ -29,9 +33,22 @@ public class Tetromino extends TGrid {
     // XXX: return false if the parent is not present (null)
     public boolean insertIntoGrid(int X, int Y, TGrid parent) {
         // XXX: ensure that every spot we need is empty and is on the grid
-
         // XXX: go ahead and insert the Tetromino by putting the non-null cell to the parent grid
-
+        //System.out.println(rows + " " + columns);
+        //System.out.println(grid);
+        for (int row = 0; row < rows; row++) {
+            if (this.grid.get(row) != null) {
+                for (int column = 0; column < columns; column++) {
+                    if (this.grid.get(row).get(column) != null) {
+                        // parent.grid.get(Y + row).set(X + column, this.grid.get(row).get(column));
+                        parent.putCell(X+column, Y+row, this.grid.get(row).get(column));
+                    }
+                }
+            }
+        }
+        /*for (int i = 0; i < parent.rows; i++) {
+            System.out.println(parent.grid.get(i));
+        }*/
         return true;
     }
 

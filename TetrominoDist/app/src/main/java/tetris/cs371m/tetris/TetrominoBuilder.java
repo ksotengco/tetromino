@@ -65,12 +65,11 @@ public class TetrominoBuilder {
 
     public static Tetromino O() {
         Tetromino tet = new Tetromino(4,3);
-        for (int i = 0; i < 2; i++) {
-            TCell cell = new TCell(OColor);
-            tet.putCell(i+1, i, cell);
+        tet.putCell(1, 0, new TCell(OColor));
+        tet.putCell(2, 0, new TCell(OColor));
+        tet.putCell(1, 1, new TCell(OColor));
+        tet.putCell(2, 1, new TCell(OColor));
 
-            cell = new TCell(OColor);
-        }
         return tet;
     }
 

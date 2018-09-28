@@ -27,13 +27,12 @@ public class TGrid {
 
         grid = new ArrayList<ArrayList<TCell>>();
 
-        ArrayList<TCell> colList = new ArrayList<>(columns);
-        for (int i = 0; i < columns; i++) {
-            colList.add(null);
-        }
-
         //Generate an empty grid
         for (int i = 0; i < rows; i++) {
+            ArrayList<TCell> colList = new ArrayList<>(rows);
+            for (int j = 0; j < columns; j++) {
+                colList.add(null);
+            }
             grid.add(colList);
         }
 
@@ -149,6 +148,26 @@ public class TGrid {
                 }
             }
 
+            int counter = 0;
+            for (int y = row - 1; y >=0; y--) {
+                for (int x = 0; x < columns; x++) {
+                    if (grid.get(y).get(x) != null) {
+                        grid.get(y+1).set(x, grid.get(y).get(x));
+                        grid.get(y).set(x, null);
+                    } else {
+                        counter++;
+                    }
+                }
+
+                if (counter == columns) {
+                    break;
+                }
+
+                counter = 0;
+            }
+            /*for (int i = 0; i < rows; i++) {
+                System.out.println(grid.get(i));
+            }*/
             return true;
         }
         return false;
