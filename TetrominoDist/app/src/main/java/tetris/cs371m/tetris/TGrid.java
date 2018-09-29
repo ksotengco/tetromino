@@ -36,27 +36,8 @@ public class TGrid {
             this.grid.add(colList);
         }
 
-        //Collections.fill(grid, null);
 
     }
-
-    /*public TGrid (TGrid rhs) {
-        this.columns = rhs.columns;
-        this.rows    = rhs.rows;
-
-        for (int row = 0; row < rhs.rows; row++) {
-            ArrayList<TCell> colList = new ArrayList<TCell>();
-            for (int col = 0; col < rhs.columns; col++) {
-                if (rhs.grid.get(row).get(col) != null) {
-                    colList.add(rhs.grid.get(row).get(col));
-                } else {
-                    colList.add(null);
-                }
-
-                this.grid.add(colList);
-            }
-        }
-    }*/
 
     // Do not modify. You will need this in the next homework
     public void visitCells(CellVisitor visitor) {
@@ -91,7 +72,6 @@ public class TGrid {
 
     // XXX: same as getCellAt(X,Y), except this function also removes it from the grid (by setting the cell to null)
     public TCell extractCellAt(int X, int Y) {
-        // TODO: come back to this, possibly make copy constructor
         TCell cell = grid.get(Y).get(X);
         grid.get(Y).set(X, null);
         return cell;
@@ -118,7 +98,7 @@ public class TGrid {
     public boolean removeCell(int X, int Y) {
         if (X >= 0 && X < columns) {
             if (Y >= 0 && Y < rows) {
-                TCell cell = grid.get(Y).get(X);
+                TCell cell = getCellAt(X, Y);
                 if (cell != null) {
                     cell.setXPosition(-1);
                     cell.setYPosition(-1);
@@ -162,8 +142,7 @@ public class TGrid {
                 if (cell != null) {
                     cell.setXPosition(-1);
                     cell.setYPosition(-1);
-                    //grid.get(row).set(x, null);
-                    extractCellAt(x, row);
+                    removeCell(x, row);
                 }
             }
 
@@ -172,7 +151,7 @@ public class TGrid {
                 for (int x = 0; x < columns; x++) {
                     if (grid.get(y).get(x) != null) {
                         putCell(x, y+1, grid.get(y).get(x));
-                        extractCellAt(x, y);
+                        removeCell(x, y);
                     } else {
                         counter++;
                     }
@@ -184,9 +163,7 @@ public class TGrid {
 
                 counter = 0;
             }
-            /*for (int i = 0; i < rows; i++) {
-                System.out.println(grid.get(i));
-            }*/
+
             return true;
         }
         return false;

@@ -22,11 +22,7 @@ public class Tetromino extends TGrid {
     // XXX: But do not set the cell position, this should be set by the parent grid
     @Override
     public boolean putCell(int X, int Y, TCell cell) {
-       //System.out.println(X + ", " + Y);
         if (X >= 0 && X < columns && Y >= 0 && Y < rows) {
-            /*if (cell != null) {
-                System.out.println(Y + ", " + X);
-            }*/
             grid.get(Y).set(X, cell);
             return true;
         }
@@ -43,33 +39,31 @@ public class Tetromino extends TGrid {
             return false;
         }
 
+        // check if spot is available
         for (int row = 0; row < rows; row++) {
-            if (this.grid.get(row) != null) {
-                for (int column = 0; column < columns; column++) {
-                    if (this.grid.get(row).get(column) != null) {
-                        if (Y + row >= parent.rows || X + column >= parent.columns) {
-                            return false;
-                        }
+            for (int column = 0; column < columns; column++) {
+                if (getCellAt(column, row) != null) {
+                    if (Y + row >= parent.rows || X + column >= parent.columns) {
+                        return false;
+                    }
 
-                        if (Y + row < 0 || X + column < 0) {
-                            return false;
-                        }
+                    if (Y + row < 0 || X + column < 0) {
+                        return false;
+                    }
 
-                        if (parent.grid.get(Y + row) != null) {
-                            if (parent.grid.get(Y + row).get(X + column) != null) {
-                                return false;
-                            }
-                        }
+                    if (parent.getCellAt(X + column, Y + row) != null) {
+                        return false;
                     }
                 }
             }
         }
 
+        // insert into the game grid
         for (int row = 0; row < rows; row++) {
             if (this.grid.get(row) != null) {
                 for (int column = 0; column < columns; column++) {
-                    if (this.grid.get(row).get(column) != null) {
-                        parent.putCell(X+column, Y+row, this.grid.get(row).get(column));
+                    if (getCellAt(column, row) != null) {
+                        parent.putCell(X+column, Y+row, getCellAt(column, row));
                     }
                 }
             }
@@ -78,38 +72,23 @@ public class Tetromino extends TGrid {
         this.parent = parent;
         this.xPos = X;
         this.yPos = Y;
-        /*for (int i = 0; i < parent.rows; i++) {
-            System.out.println(parent.grid.get(i));
-        }*/
+
         return true;
     }
 
     // XXX: remove this Tetromino from the parent grid
     // XXX: do nothing if the tetromino has not been added to a larger grid
     public void removeFromGrid() {
-        if (parent == null)
+        if (this.parent == null)
             return;
 
-        //System.out.println("before: " + parent.grid);
-        //System.out.println("X: " + xPos + " Y: " + yPos);
-        for (int row = yPos; row < parent.rows; row++) {
-            for (int column = xPos; column < parent.columns; column++) {
-                parent.removeCell(column, row);
+        for (int row = yPos; row < parent.getHeight(); row++) {
+            for (int column = xPos; column < parent.getWidth(); column++) {
+                this.parent.removeCell(column, row);
             }
         }
-        //System.out.println("after: " + parent.grid);
-    }
 
-    public void printGrid(String name, TGrid grid) {
-        System.out.println(name);
-        for (int row = 0; row < grid.rows; row++) {
-            for (int col = 0; col < grid.columns; col++) {
-                TCell cell = grid.getCellAt(col, row);
-                System.out.print(cell);
-            }
-            System.out.println();
-        }
-        System.out.println();
+        this.parent = null;
     }
 
     // XXX: shift this Tetromino down one unit
@@ -117,9 +96,11 @@ public class Tetromino extends TGrid {
         boolean result = true;
 
         // XXX: if we fail to move it down then put it back where it was
+        TGrid saveParent = parent;
         removeFromGrid();
-        if (!insertIntoGrid(this.xPos, this.yPos+1, parent)) {
-            insertIntoGrid(this.xPos, this.yPos, parent);
+
+        if (!insertIntoGrid(this.xPos, this.yPos+1, saveParent)) {
+            insertIntoGrid(this.xPos, this.yPos, saveParent);
             result = false;
         }
 
@@ -133,23 +114,11 @@ public class Tetromino extends TGrid {
         boolean result = true;
 
         //if we fail to move it then put it back where it was
+        TGrid saveParent = parent;
         removeFromGrid();
-        if (!insertIntoGrid(this.xPos + 1, this.yPos, parent)) {
-            insertIntoGrid(this.xPos, this.yPos, parent);
-            result = false;
-        }
 
-        return result;
-    }
-
-    // same as shiftRight above, but will instead shift a variable # of spaces
-    public boolean shiftRight(int spaces) {
-        boolean result = true;
-
-        //if we fail to move it then put it back where it was
-        removeFromGrid();
-        if (!insertIntoGrid(this.xPos + spaces, this.yPos, parent)) {
-            insertIntoGrid(this.xPos, this.yPos, parent);
+        if (!insertIntoGrid(this.xPos + 1, this.yPos, saveParent)) {
+            insertIntoGrid(this.xPos, this.yPos, saveParent);
             result = false;
         }
 
@@ -161,41 +130,28 @@ public class Tetromino extends TGrid {
         boolean result = true;
 
         //if we fail to move it then put it back where it was
+        TGrid saveParent = parent;
         removeFromGrid();
-        if (!insertIntoGrid(this.xPos - 1, this.yPos, parent)) {
-            insertIntoGrid(this.xPos, this.yPos, parent);
+
+        if (!insertIntoGrid(this.xPos - 1, this.yPos, saveParent)) {
+            insertIntoGrid(this.xPos, this.yPos, saveParent);
             result = false;
         }
 
         return result;
     }
-
-    // same as shiftLeft above, but will instead shift a variable # of spaces
-    public boolean shiftLeft(int spaces) {
-        boolean result = true;
-
-        //if we fail to move it then put it back where it was
-        removeFromGrid();
-        if (!insertIntoGrid(this.xPos - spaces, this.yPos, parent)) {
-            insertIntoGrid(this.xPos, this.yPos, parent);
-            result = false;
-        }
-
-        return result;
-    }
-
 
     // return a transpose of this Tetromino
     private ArrayList<ArrayList<TCell>> transpose() {
-        ////take the transpose
+        //take the transpose
         ArrayList<ArrayList<TCell>> transpose = new ArrayList<>();
 
         for (int column = 0; column < this.columns; column++) {
             ArrayList<TCell> colList = new ArrayList<TCell>();
 
             for (int row = 0; row < this.rows; row++) {
-                if (grid.get(row) != null && grid.get(row).get(column) != null) {
-                    colList.add(grid.get(row).get(column));
+                if (getCellAt(column, row) != null) {
+                    colList.add(getCellAt(column, row));
                 } else {
                     colList.add(null);
                 }
@@ -215,39 +171,23 @@ public class Tetromino extends TGrid {
     public boolean rotateCounterClockwise() {
         boolean result = true;
         // XXX rotation doesn't mean anything if it is not a square Tetromino
-        if (this.rows != this.columns) {
+        if (this.getHeight() != this.getWidth()) {
             return false;
         }
 
         // XXX get the transpose of this Tetromino
         ArrayList<ArrayList<TCell>> temp = (ArrayList<ArrayList<TCell>>) this.grid.clone();
+        TGrid saveParent = parent;
         removeFromGrid();
-        for (int row = 0; row < this.rows; row++) {
+
+
+        //XXX reverse each column
+        for (int row = 0; row < this.getWidth(); row++) {
             Collections.reverse(this.grid.get(row));
         }
         ArrayList<ArrayList<TCell>> transpose = transpose();
 
         this.grid = transpose;
-        if (!insertIntoGrid(this.xPos, this.yPos, parent)) {
-            result = wallKick();
-        }
-
-        /*for (int column = 0; column < this.columns; column++) {
-            for(int row = 0; row < this.rows; row++) {
-                int transpose_idx = this.columns - 1 - row;
-
-                if (transpose.get(transpose_idx) != null && transpose.get(transpose_idx).get(column) != null) {
-                    putCell(column, row, transpose.get(transpose_idx).get(column));
-                } else {
-                    putCell(column, row, null);
-                }
-
-            }
-        }
-
-        insertIntoGrid(xPos, yPos, parent);*/
-
-        //XXX reverse each column
 
         // If we fail we can't give up so easily, try a "wall kick"
         // http://tetris.wikia.com/wiki/Wall_kick
@@ -256,12 +196,16 @@ public class Tetromino extends TGrid {
         // shift 2 space to the right
         // shift 1 space to the left
         // shift 2 space to the left
-        if (!result) {
-            this.grid = temp;
-            insertIntoGrid(this.xPos, this.yPos, parent);
+        if (!insertIntoGrid(this.xPos, this.yPos, saveParent)) {
+            result = wallKick(saveParent);
         }
 
+
         // XXX: if we fail to move it down then put it back where it was
+        if (!result) {
+            this.grid = temp;
+            insertIntoGrid(this.xPos, this.yPos, saveParent);
+        }
 
         return result;
     }
@@ -272,24 +216,24 @@ public class Tetromino extends TGrid {
     public boolean rotateClockwise() {
         boolean result = true;
         // XXX: rotation doesn't mean anything if it is not a square Tetromino
-        if (this.rows != this.columns) {
+        if (this.getHeight() != this.getWidth()) {
             return false;
         }
 
         // XXX: take the transpose
         ArrayList<ArrayList<TCell>> transpose = transpose();
         // XXX: reverse each row
-        //System.out.println(transpose);
-        for (int row = 0; row < this.rows; row++) {
+        for (int row = 0; row < this.getWidth(); row++) {
             Collections.reverse(transpose.get(row));
         }
 
         ArrayList<ArrayList<TCell>> temp = (ArrayList<ArrayList<TCell>>) this.grid.clone();
+        TGrid saveParent = parent;
         removeFromGrid();
 
         grid = transpose;
-        if (!insertIntoGrid(this.xPos, this.yPos, parent)) {
-            result = wallKick();
+        if (!insertIntoGrid(this.xPos, this.yPos, saveParent)) {
+            result = wallKick(saveParent);
         }
 
         //If we fail we can't give up so easily, try a "wall kick"
@@ -301,7 +245,7 @@ public class Tetromino extends TGrid {
         // shift 2 space to the left
         if (!result) {
             grid = temp;
-            insertIntoGrid(this.xPos, this.yPos, parent);
+            insertIntoGrid(this.xPos, this.yPos, saveParent);
         }
 
 
@@ -311,7 +255,9 @@ public class Tetromino extends TGrid {
 
     }
 
-    public boolean wallKick () {
+    // returns true if wall kick is possible; false otherwise
+    public boolean wallKick (TGrid parent) {
+        // tried just calling shiftLeft/shiftRight, but it messed with insertIntoGrid operations
         if (insertIntoGrid(this.xPos + 1, this.yPos, parent)) {
             return true;
         }
@@ -330,19 +276,21 @@ public class Tetromino extends TGrid {
 
     // XXX: attempt to move down this Tetromino as far as possible
     public void zoomDown() {
+        TGrid saveParent = parent;
         removeFromGrid();
-        int bottom = parent.rows - 1;
+
+        int bottom = saveParent.getHeight() - 1;
         boolean result = false;
 
         for (int i = bottom; i >= 0; i--) {
-            if (insertIntoGrid(this.xPos, i, parent)) {
+            if (insertIntoGrid(this.xPos, i, saveParent)) {
                 result = true;
                 break;
             }
         }
 
         if (!result) {
-            insertIntoGrid(this.xPos, this.yPos, parent);
+            insertIntoGrid(this.xPos, this.yPos, saveParent);
         }
     }
 
