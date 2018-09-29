@@ -39,20 +39,30 @@ public class Tetromino extends TGrid {
     public boolean insertIntoGrid(int X, int Y, TGrid parent) {
         // XXX: ensure that every spot we need is empty and is on the grid
         // XXX: go ahead and insert the Tetromino by putting the non-null cell to the parent grid
-        //System.out.println(rows + " " + columns);
-        //System.out.println(grid);
+        if (parent == null) {
+            return false;
+        }
+
         for (int row = 0; row < rows; row++) {
             if (this.grid.get(row) != null) {
                 for (int column = 0; column < columns; column++) {
                     if (this.grid.get(row).get(column) != null) {
-                        // parent.grid.get(Y + row).set(X + column, this.grid.get(row).get(column));
-                        //parent.putCell(X+column, Y+row, this.grid.get(row).get(column));
-                        // TODO: nullpointerexception for cannotRotate
-                        if (parent.grid.get(Y+row) != null) {
+                        if (Y + row >= parent.rows || X + column >= parent.columns) {
+                            return false;
+                        }
+
+                        if (parent.grid.get(Y + row) != null) {
                             if (parent.grid.get(Y + row).get(X + column) != null) {
                                 return false;
                             }
                         }
+                        /*try {
+                            if (parent.grid.get(Y + row).get(X + column) != null) {
+                                return false;
+                            }
+                        } catch (NullPointerException | IndexOutOfBoundsException e) {
+                            return false;
+                        }*/
                     }
                 }
             }
@@ -107,9 +117,14 @@ public class Tetromino extends TGrid {
 
     // XXX: shift this Tetromino down one unit
     public boolean shiftDown() {
-        boolean result = false;
+        boolean result = true;
 
         // XXX: if we fail to move it down then put it back where it was
+        removeFromGrid();
+        if (!insertIntoGrid(this.xPos, this.yPos+1, parent)) {
+            insertIntoGrid(this.xPos, this.yPos, parent);
+            result = false;
+        }
 
         return result;
     }
@@ -152,10 +167,6 @@ public class Tetromino extends TGrid {
 
             transpose.add(colList);
         }
-
-        /*System.out.println(grid);
-        System.out.println();
-        System.out.println(transpose);*/
 
         return transpose;
     }
@@ -225,15 +236,14 @@ public class Tetromino extends TGrid {
             Collections.reverse(transpose.get(row));
         }
 
+        ArrayList<ArrayList<TCell>> temp = (ArrayList<ArrayList<TCell>>) grid.clone();
         removeFromGrid();
-        TGrid temp = this;
 
         grid = transpose;
         if (!insertIntoGrid(this.xPos, this.yPos, parent)) {
-            grid = temp.grid;
+            grid = temp;
+            insertIntoGrid(this.xPos, this.yPos, parent);
         }
-        /*System.out.println(grid);
-        assert (false);*/
 
         //If we fail we can't give up so easily, try a "wall kick"
         //http://tetris.wikia.com/wiki/Wall_kick
@@ -252,7 +262,20 @@ public class Tetromino extends TGrid {
 
     // XXX: attempt to move down this Tetromino as far as possible
     public void zoomDown() {
+        removeFromGrid();
+        int bottom = parent.rows - 1;
+        boolean result = false;
 
+        for (int i = bottom; i >= 0; i--) {
+            if (insertIntoGrid(this.xPos, i, parent)) {
+                result = true;
+                break;
+            }
+        }
+
+        if (!result) {
+            insertIntoGrid(this.xPos, this.yPos, parent);
+        }
     }
 
 }

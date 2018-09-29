@@ -25,7 +25,7 @@ public class TGrid {
         this.columns = columns;
         this.rows    = rows;
 
-        grid = new ArrayList<ArrayList<TCell>>();
+        this.grid = new ArrayList<ArrayList<TCell>>();
 
         //Generate an empty grid
         for (int i = 0; i < rows; i++) {
@@ -33,19 +33,30 @@ public class TGrid {
             for (int j = 0; j < columns; j++) {
                 colList.add(null);
             }
-            grid.add(colList);
+            this.grid.add(colList);
         }
 
         //Collections.fill(grid, null);
 
     }
 
-    public TGrid (TGrid rhs) {
+    /*public TGrid (TGrid rhs) {
         this.columns = rhs.columns;
         this.rows    = rhs.rows;
 
-        this.grid    = rhs.grid;
-    }
+        for (int row = 0; row < rhs.rows; row++) {
+            ArrayList<TCell> colList = new ArrayList<TCell>();
+            for (int col = 0; col < rhs.columns; col++) {
+                if (rhs.grid.get(row).get(col) != null) {
+                    colList.add(rhs.grid.get(row).get(col));
+                } else {
+                    colList.add(null);
+                }
+
+                this.grid.add(colList);
+            }
+        }
+    }*/
 
     // Do not modify. You will need this in the next homework
     public void visitCells(CellVisitor visitor) {
