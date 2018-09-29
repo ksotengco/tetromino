@@ -1,5 +1,6 @@
 package tetris.cs371m.tetris;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by cody on 9/23/15.
@@ -212,12 +213,27 @@ public class Tetromino extends TGrid {
     public boolean rotateClockwise() {
         boolean result = false;
         // XXX: rotation doesn't mean anything if it is not a square Tetromino
+        if (this.rows != this.columns) {
+            return result;
+        }
 
         // XXX: take the transpose
-
+        ArrayList<ArrayList<TCell>> transpose = transpose();
         // XXX: reverse each row
+        //System.out.println(transpose);
+        for (int row = 0; row < this.rows; row++) {
+            Collections.reverse(transpose.get(row));
+        }
 
-        //assert (false);
+        removeFromGrid();
+        TGrid temp = this;
+
+        grid = transpose;
+        if (!insertIntoGrid(this.xPos, this.yPos, parent)) {
+            grid = temp.grid;
+        }
+        /*System.out.println(grid);
+        assert (false);*/
 
         //If we fail we can't give up so easily, try a "wall kick"
         //http://tetris.wikia.com/wiki/Wall_kick

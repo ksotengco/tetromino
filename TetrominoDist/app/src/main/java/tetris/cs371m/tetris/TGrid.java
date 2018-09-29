@@ -40,6 +40,13 @@ public class TGrid {
 
     }
 
+    public TGrid (TGrid rhs) {
+        this.columns = rhs.columns;
+        this.rows    = rhs.rows;
+
+        this.grid    = rhs.grid;
+    }
+
     // Do not modify. You will need this in the next homework
     public void visitCells(CellVisitor visitor) {
         for (int i = 0; i < this.rows; i++) {
