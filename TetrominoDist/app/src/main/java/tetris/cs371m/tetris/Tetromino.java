@@ -21,7 +21,11 @@ public class Tetromino extends TGrid {
     // XXX: But do not set the cell position, this should be set by the parent grid
     @Override
     public boolean putCell(int X, int Y, TCell cell) {
+       //System.out.println(X + ", " + Y);
         if (X >= 0 && X < columns && Y >= 0 && Y < rows) {
+            /*if (cell != null) {
+                System.out.println(Y + ", " + X);
+            }*/
             grid.get(Y).set(X, cell);
             return true;
         }
@@ -41,11 +45,28 @@ public class Tetromino extends TGrid {
                 for (int column = 0; column < columns; column++) {
                     if (this.grid.get(row).get(column) != null) {
                         // parent.grid.get(Y + row).set(X + column, this.grid.get(row).get(column));
+                        //parent.putCell(X+column, Y+row, this.grid.get(row).get(column));
+                        if (parent.grid.get(Y+row).get(X+column) != null){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int row = 0; row < rows; row++) {
+            if (this.grid.get(row) != null) {
+                for (int column = 0; column < columns; column++) {
+                    if (this.grid.get(row).get(column) != null) {
                         parent.putCell(X+column, Y+row, this.grid.get(row).get(column));
                     }
                 }
             }
         }
+
+        this.parent = parent;
+        this.xPos = X;
+        this.yPos = Y;
         /*for (int i = 0; i < parent.rows; i++) {
             System.out.println(parent.grid.get(i));
         }*/
@@ -55,7 +76,14 @@ public class Tetromino extends TGrid {
     // XXX: remove this Tetromino from the parent grid
     // XXX: do nothing if the tetromino has not been added to a larger grid
     public void removeFromGrid() {
+        if (parent == null)
+            return;
 
+        for (int row = yPos; row < this.rows; row++) {
+            for (int column = xPos; column < this.columns; column++) {
+                parent.extractCellAt(column, row);
+            }
+        }
     }
 
     // XXX: shift this Tetromino down one unit
@@ -92,6 +120,24 @@ public class Tetromino extends TGrid {
         ////take the transpose
         ArrayList<ArrayList<TCell>> transpose = new ArrayList<>();
 
+        for (int column = 0; column < this.columns; column++) {
+            ArrayList<TCell> colList = new ArrayList<TCell>();
+
+            for (int row = 0; row < this.rows; row++) {
+                if (grid.get(row) != null && grid.get(row).get(column) != null) {
+                    colList.add(grid.get(row).get(column));
+                } else {
+                    colList.add(null);
+                }
+            }
+
+            transpose.add(colList);
+        }
+
+        /*System.out.println(grid);
+        System.out.println();
+        System.out.println(transpose);*/
+
         return transpose;
     }
 
@@ -103,8 +149,39 @@ public class Tetromino extends TGrid {
     public boolean rotateCounterClockwise() {
         boolean result = false;
         // XXX rotation doesn't mean anything if it is not a square Tetromino
+        if (this.rows != this.columns) {
+            return result;
+        }
 
         // XXX get the transpose of this Tetromino
+        ArrayList<ArrayList<TCell>> transpose = transpose();
+
+        /*System.out.println(transpose);
+        System.out.println("\n\n");*/
+        // XXX: reverse each row
+        for (int column = 0; column < this.columns; column++) {
+            for(int row = 0; row < this.rows; row++) {
+                int transpose_idx = this.columns - 1 - row;
+                //System.out.println("grid: " + row + ", " + column);
+                //System.out.println("transpose_idx: " + transpose_idx);
+                try {
+                    if (transpose.get(transpose_idx) != null && transpose.get(transpose_idx).get(column) != null) {
+                    /*System.out.println("ROW: " + row);
+                    System.out.println("COLUMN: " + column + "\n");*/
+                        putCell(column, row, transpose.get(transpose_idx).get(column));
+                    } else {
+                        putCell(column, row, null);
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.println(transpose_idx);
+
+                }
+            }
+        }
+
+        removeFromGrid();
+        insertIntoGrid(xPos, yPos, parent);
+        System.out.println(grid);
 
         //XXX reverse each column
 
@@ -129,11 +206,9 @@ public class Tetromino extends TGrid {
         boolean result = false;
         // XXX: rotation doesn't mean anything if it is not a square Tetromino
 
-
         // XXX: take the transpose
 
-        // XXX: reverse each row
-
+        //assert (false);
 
         //If we fail we can't give up so easily, try a "wall kick"
         //http://tetris.wikia.com/wiki/Wall_kick

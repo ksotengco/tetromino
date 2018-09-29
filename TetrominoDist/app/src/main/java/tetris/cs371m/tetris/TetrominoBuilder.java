@@ -31,21 +31,19 @@ public class TetrominoBuilder {
     public static Tetromino I() {
         Tetromino tet = new Tetromino(4,4);
         for (int i = 0; i < 4; i++) {
-            TCell cell = new TCell(IColor);
-            tet.putCell(i, 1, cell);
+            tet.putCell(i, 1, new TCell(IColor));
         }
+
         return tet;
     }
 
     public static Tetromino J() {
         Tetromino tet = new Tetromino(3,3);
         for (int i = 0; i < 3; i++) {
-            TCell cell = new TCell(JColor);
-            tet.putCell(i, 1, cell);
+            tet.putCell(i, 1, new TCell(JColor));
         }
 
-        TCell cell = new TCell(JColor);
-        tet.putCell(0,0, cell);
+        tet.putCell(0,0, new TCell(JColor));
 
         return tet;
     }
@@ -53,12 +51,10 @@ public class TetrominoBuilder {
     public static Tetromino L() {
         Tetromino tet = new Tetromino(3,3);
         for (int i = 0; i < 3; i++) {
-            TCell cell = new TCell(LColor);
-            tet.putCell(i, 1, cell);
+            tet.putCell(i, 1, new TCell(LColor));
         }
 
-        TCell cell = new TCell(LColor);
-        tet.putCell(2,0, cell);
+        tet.putCell(2,0, new TCell(LColor));
 
         return tet;
     }
@@ -75,18 +71,30 @@ public class TetrominoBuilder {
 
     public static Tetromino S() {
         Tetromino tet = new Tetromino(3,3);
+        tet.putCell(0, 1, new TCell(SColor));
+        tet.putCell(1, 1, new TCell(SColor));
+        tet.putCell(1, 0, new TCell(SColor));
+        tet.putCell(2, 0, new TCell(SColor));
 
         return tet;
     }
 
     public static Tetromino T() {
         Tetromino tet = new Tetromino(3,3);
+        tet.putCell(1, 0, new TCell(TColor));
+        for (int i = 0; i < 3; i++) {
+            tet.putCell(1, i, new TCell(TColor));
+        }
 
         return tet;
     }
 
     public static Tetromino Z() {
         Tetromino tet = new Tetromino(3,3);
+        tet.putCell(0, 0, new TCell(ZColor));
+        tet.putCell(1, 0, new TCell(ZColor));
+        tet.putCell(1, 1, new TCell(ZColor));
+        tet.putCell(2, 1, new TCell(ZColor));
 
         return tet;
     }

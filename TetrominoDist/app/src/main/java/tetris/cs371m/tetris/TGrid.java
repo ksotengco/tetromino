@@ -75,6 +75,8 @@ public class TGrid {
     public TCell extractCellAt(int X, int Y) {
         // TODO: come back to this, possibly make copy constructor
         TCell cell = grid.get(Y).get(X);
+        cell.setXPosition(-1);
+        cell.setYPosition(-1);
         grid.get(Y).set(X, null);
         return cell;
     }
@@ -144,7 +146,8 @@ public class TGrid {
                 if (cell != null) {
                     cell.setXPosition(-1);
                     cell.setYPosition(-1);
-                    grid.get(row).set(x, null);
+                    //grid.get(row).set(x, null);
+                    extractCellAt(x, row);
                 }
             }
 
@@ -152,8 +155,8 @@ public class TGrid {
             for (int y = row - 1; y >=0; y--) {
                 for (int x = 0; x < columns; x++) {
                     if (grid.get(y).get(x) != null) {
-                        grid.get(y+1).set(x, grid.get(y).get(x));
-                        grid.get(y).set(x, null);
+                        putCell(x, y+1, grid.get(y).get(x));
+                        extractCellAt(x, y);
                     } else {
                         counter++;
                     }
