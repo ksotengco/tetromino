@@ -83,7 +83,7 @@ public class TetrominoBuilder {
         Tetromino tet = new Tetromino(3,3);
         tet.putCell(1, 0, new TCell(TColor));
         for (int i = 0; i < 3; i++) {
-            tet.putCell(1, i, new TCell(TColor));
+            tet.putCell(i, 1, new TCell(TColor));
         }
 
         return tet;

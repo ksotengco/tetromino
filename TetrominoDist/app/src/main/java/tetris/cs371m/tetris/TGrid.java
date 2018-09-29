@@ -75,8 +75,6 @@ public class TGrid {
     public TCell extractCellAt(int X, int Y) {
         // TODO: come back to this, possibly make copy constructor
         TCell cell = grid.get(Y).get(X);
-        cell.setXPosition(-1);
-        cell.setYPosition(-1);
         grid.get(Y).set(X, null);
         return cell;
     }
