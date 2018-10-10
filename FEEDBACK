@@ -1,0 +1,39 @@
+Rubic
+===================================================
+7 - TetrominoBuilder
+    1 - construct I
+    1 - construct J
+    1 - construct L
+    1 - construct O
+    1 - construct S
+    1 - construct T
+    1 - construct Z
+
+18 - TGrid
+    3 - delete row
+    3 - clear whole grid
+    3 - get first full row
+    3 - put cell
+    3 - remove cell
+    3 - get cell
+
+41 - Tetromino
+    5 - shift down
+    5 - shift right
+    5 - shift left
+    7 - rotate clockwise
+        5 - normal rotate
+        2 - wall kick
+    7 - rotate counter clockwise
+        5 - normal rotate
+        2 - wall kick
+    3 - zoom down
+    3 - insertIntoGrid
+    3 - removeFromGrid
+    3 - putCell
+1 - readme
+
+Total: 67
+===================================================
+comments: 
+67
